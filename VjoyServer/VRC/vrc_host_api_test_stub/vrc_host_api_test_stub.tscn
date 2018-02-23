@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=1]
+
+[ext_resource path="res://vrc_host_api_test_stub/vrc_host_api_test_stub.gd" type="Script" id=1]
+
+[node name="vrc_host_api_test_stub" type="Node"]
+
+script/script = ExtResource( 1 )
+
+
