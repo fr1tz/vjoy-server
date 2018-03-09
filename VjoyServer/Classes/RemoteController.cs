@@ -27,6 +27,8 @@ namespace VjoyServer
 {
     public class RemoteController
     {
+        const string vrcFileName = "vJoyServerVRC.tar";
+
         TcpClient tcpClient;
         IPAddress address;
         int tcpPort;
@@ -81,6 +83,8 @@ namespace VjoyServer
         {
             lock (this.joystickState)
             {
+                bool old_button_state = this.joystickState.buttons[0];
+
                 this.joystickState.axis_x = DecodeInt7(data[3]) / 127f;
                 this.joystickState.axis_y = DecodeInt7(data[4]) / 127f;
                 this.joystickState.axis_z = DecodeInt7(data[5]) / 127f;
@@ -93,6 +97,9 @@ namespace VjoyServer
                     this.joystickState.buttons[i] = (data[11] & (1 << i)) > 0;
                 for (int i = 0; i < 8; i++)
                     this.joystickState.buttons[8 + i] = (data[12] & (1 << i)) > 0;
+
+                if (old_button_state != this.joystickState.buttons[0])
+                    Program.Log.AddEntry(string.Format("Button 1 state: {0}", this.joystickState.buttons[0]));
             }
 
             if (this.vjoyDevice != null)
@@ -115,7 +122,7 @@ namespace VjoyServer
             {
                 this.tcpClient.Connect(this.address, this.tcpPort);
             }
-            catch (SocketException e)
+            catch (Exception e)
             {
                 Log(string.Format("Failed to connect: {0}", e.Message));
                 return false;
@@ -132,7 +139,7 @@ namespace VjoyServer
                 {
                     this.tcpClient.GetStream().Write(bytes, 0, bytes.Length);
                 }
-                catch (System.IO.IOException e)
+                catch (Exception e)
                 {
                     Log(e.Message);
                     return;
@@ -158,7 +165,17 @@ namespace VjoyServer
 
             this.controllerId = ((IPEndPoint)this.tcpClient.Client.LocalEndPoint).Port;
 
-            byte[] vrcData = File.ReadAllBytes("VjoyServerVRC.tar");
+            byte[] vrcData;
+            try
+            {
+                vrcData = File.ReadAllBytes(vrcFileName);
+            }
+            catch(Exception e)
+            {
+                Log(string.Format("Error reading {0}: {1}", vrcFileName, e.Message));
+                return;
+            }
+
             string cmds = "";
             VjoyDevice[] vjoyDevices = Program.VjoyInterface.GetDevices();
             foreach(VjoyDevice vjoyDevice in vjoyDevices)

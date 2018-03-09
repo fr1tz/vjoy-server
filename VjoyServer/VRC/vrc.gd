@@ -7,7 +7,7 @@
 
 extends TextureFrame
 
-const SEND_UPDATE_INTERVAL = 0.064
+const SEND_UPDATE_INTERVAL = 0.05
 
 var host = null
 
@@ -45,6 +45,8 @@ func _fixed_process(delta):
 func _vrc_init(vrc_host_api):
 	host = vrc_host_api
 	get_node("log_sender").start(host, "$0", "[L][NL][S][NL][Cfs][0]", [" | "," ¦ "," , "])
+	for panel in mControlPanels.get_children():
+		panel.connect("send_update", self, "_send_priority_update")
 	_on_var_changed("CONTROLLER_ID")
 	_on_var_changed("SEND_UPDATE_ADDR")
 	_on_var_changed("ACTIVE_JOYSTICK_ID")
@@ -59,7 +61,6 @@ func _on_var_changed(var_name):
 	var var_value = host.get_var(var_name)
 	if var_name == "CONTROLLER_ID":
 		mControllerId = int(var_value)
-		print(mControllerId)
 	elif var_name == "ACTIVE_JOYSTICK_ID":
 		mJoystickId = int(var_value)
 		if mJoystickId > 0 && mJoystickId <= 16:
@@ -100,6 +101,27 @@ func _encode_uint16(val):
 	bytes.append(b1)
 	bytes.append(b2)
 	return bytes
+
+func _send_priority_update():
+	call_deferred("_send_update")
+#	var state = {
+#		"axis_x": 0,
+#		"axis_y": 0,
+#		"axis_z": 0,
+#		"axis_x_rot": -1,
+#		"axis_y_rot": -1,
+#		"axis_z_rot": 0,
+#		"slider1": -1,
+#		"slider2": -1,
+#		"buttons": []
+#	}
+#	state.buttons.resize(16)
+#	for i in range(0, 16):
+#		state.buttons[i] = 0
+#	for panel in mControlPanels.get_children():
+#		panel.update_joystick_state(state)
+#	prints("button 1 state:", state.buttons[0])
+#	_send_update()
 
 func _send_update():
 	if mJoystickId == 0:
@@ -160,12 +182,15 @@ func go_back():
 	return false
 
 func activate_joystick():
-	#mJoystickPanel.set_joystick_id(mJoystickId)
+	for panel in mControlPanels.get_children():
+		panel.activate(mJoystickId)
 	set_fixed_process(true)
 	host.show_region(mControlPanels.get_child(0).get_rect())
 	host.log_notice(self, "joystick enabled")
 
 func deactivate_joystick():
+	for panel in mControlPanels.get_children():
+		panel.deactivate()
 	set_fixed_process(false)
 	host.show_region(get_node("main_panel").get_rect())
 	host.log_notice(self, "joystick disabled")

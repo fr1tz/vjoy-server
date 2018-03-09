@@ -129,6 +129,9 @@ namespace VjoyServer
 
         public bool AddRemoteController(RemoteController rc)
         {
+            if (!IsExported())
+                return false;
+
             lock (this.remoteControllers)
             {
                 if (GetStatus() != Status.Acquired)
