@@ -1,4 +1,87 @@
+# This GDScript file was written by Michael Goldener <mg@wasted.ch>
+# based on JavaScript code written by Hans Muller
+# (https://codepen.io/HansMuller/pen/lDfzt).
+
+#-------------------------------------------------------------------------------
+
+# Copyright © 2018 Michael Goldener <mg@wasted.ch>
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+#-------------------------------------------------------------------------------
+
+# Copyright (c) 2018 by Hans Muller (https://codepen.io/HansMuller/pen/lDfzt)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is 
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 extends Node
+
+func _distance_to_edge_squared(p1, p2, p3):
+	var dx = p2.x - p1.x
+	var dy = p2.y - p1.y
+	if dx == 0 || dy == 0: 
+		return null
+	var u = ((p3.x - p1.x) * dx + (p3.y - p1.y) * dy) / (dx * dx + dy * dy)
+	if u < 0 || u > 1:
+		return null
+	var x = p1.x + u * dx # closest point on edge p1,p2 to p3
+	var y = p1.y + u * dy
+	return pow(p3.x - x, 2) + pow(p3.y - y, 2)
+
+func _polygon_vertex_near(polygon, p, polygonVertexRadius = 9):
+	var thresholdDistanceSquared = polygonVertexRadius * polygonVertexRadius * 2
+	for i in range(0, polygon.vertices.size()):
+		var vertex = polygon.vertices[i]
+		var dx = vertex.x - p.x
+		var dy = vertex.y - p.y
+		if dx*dx + dy*dy < thresholdDistanceSquared:
+			return i
+	return null
+
+func _polygon_edge_near(polygon, p, polygonVertexRadius = 9):
+	var thresholdDistanceSquared = polygonVertexRadius * polygonVertexRadius * 2;
+	for i in range(0, polygon.vertices.size()):
+		var v0 = polygon.vertices[i]
+		var v1 = polygon.vertices[(i + 1) % polygon.vertices.length];
+		if _distance_to_edge_squared(v0, v1, p) < thresholdDistanceSquared:
+			var ret = {
+				"index0": i,
+				"index1": (i + 1) % polygon.vertices.size()
+			}
+			return ret
+	return null
 
 # based on http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/, edgeA => "line a", edgeB => "line b"
 func _edges_intersection(edgeA, edgeB):
@@ -15,7 +98,6 @@ func _edges_intersection(edgeA, edgeB):
 		- (edgeA.vertex2.y - edgeA.vertex1.y) \
 		* (edgeA.vertex1.x - edgeB.vertex1.x)) \
 		/ den
-	prints(ua, ub)
 	if ua < 0 || ub < 0 || ua > 1 || ub > 1:
 		return null
 	var x = edgeA.vertex1.x + ua * (edgeA.vertex2.x - edgeA.vertex1.x)
@@ -79,6 +161,34 @@ func _is_reflex_vertex(polygon, vertex_index):
 	if _left_side(prevVertex, nextVertex, thisVertex) < 0:
 		return true  # TBD: return true if thisVertex is inside polygon when thisVertex isn't included
 	return false
+
+#function createMarginPolygon(polygon)
+#{
+#    var offsetEdges = [];
+#    for (var i = 0; i < polygon.edges.length; i++) {
+#        var edge = polygon.edges[i];
+#        var dx = edge.outwardNormal.x * shapeMargin;
+#        var dy = edge.outwardNormal.y * shapeMargin;
+#        offsetEdges.push(createOffsetEdge(edge, dx, dy));
+#    }
+#
+#    var vertices = [];
+#    for (var i = 0; i < offsetEdges.length; i++) {
+#        var thisEdge = offsetEdges[i];
+#        var prevEdge = offsetEdges[(i + offsetEdges.length - 1) % offsetEdges.length];
+#        var vertex = edgesIntersection(prevEdge, thisEdge);
+#        if (vertex)
+#            vertices.push(vertex);
+#        else {
+#            var arcCenter = polygon.edges[i].vertex1;
+#            appendArc(vertices, arcCenter, shapeMargin, prevEdge.vertex2, thisEdge.vertex1, false);
+#        }
+#    }
+#
+#    var marginPolygon = createPolygon(vertices);
+#    marginPolygon.offsetEdges = offsetEdges;
+#    return marginPolygon;
+#}
 
 func _create_padding_polygon(polygon, shapePadding):
 	var offsetEdges = [];

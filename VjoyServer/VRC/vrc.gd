@@ -12,7 +12,7 @@ const SEND_UPDATE_INTERVAL = 0.05
 var host = null
 
 var mMainPanel = null
-var mControlPanels = null
+var mControlPanel = null
 var mControllerId = 0
 var mJoystickId = 0
 var mSendUpdateCountdown = SEND_UPDATE_INTERVAL
@@ -25,7 +25,7 @@ func _call_vrc_init(node, vrc_host_api):
 
 func _ready():
 	mMainPanel = get_node("main_panel")
-	mControlPanels = get_node("control_panels")
+	mControlPanel = get_node("control_panel")
 	var vrc_host_api = get_meta("vrc_host_api")
 	if vrc_host_api == null:
 		vrc_host_api = get_node("/root/vrc_host_api_test_stub")
@@ -45,8 +45,7 @@ func _fixed_process(delta):
 func _vrc_init(vrc_host_api):
 	host = vrc_host_api
 	get_node("log_sender").start(host, "$0", "[L][NL][S][NL][Cfs][0]", [" | "," ¦ "," , "])
-	for panel in mControlPanels.get_children():
-		panel.connect("send_update", self, "_send_priority_update")
+	mControlPanel.connect("send_update", self, "_send_priority_update")
 	_on_var_changed("CONTROLLER_ID")
 	_on_var_changed("SEND_UPDATE_ADDR")
 	_on_var_changed("ACTIVE_JOYSTICK_ID")
@@ -140,8 +139,7 @@ func _send_update():
 	state.buttons.resize(16)
 	for i in range(0, 16):
 		state.buttons[i] = 0
-	for panel in mControlPanels.get_children():
-		panel.update_joystick_state(state)
+	mControlPanel.update_joystick_state(state)
 	var axis_x = int((clamp(state.axis_x, -1, 1)*127))
 	var axis_y = int((clamp(state.axis_y, -1, 1)*127))
 	var axis_z = int((clamp(state.axis_z, -1, 1)*127))
@@ -182,15 +180,13 @@ func go_back():
 	return false
 
 func activate_joystick():
-	for panel in mControlPanels.get_children():
-		panel.activate(mJoystickId)
+	mControlPanel.activate(mJoystickId)
 	set_fixed_process(true)
-	host.show_region(mControlPanels.get_child(0).get_rect())
+	host.show_region(get_node("regions/control1").get_rect())
 	host.log_notice(self, "joystick enabled")
 
 func deactivate_joystick():
-	for panel in mControlPanels.get_children():
-		panel.deactivate()
+	mControlPanel.deactivate()
 	set_fixed_process(false)
-	host.show_region(get_node("main_panel").get_rect())
+	host.show_region(get_node("regions/main").get_rect())
 	host.log_notice(self, "joystick disabled")

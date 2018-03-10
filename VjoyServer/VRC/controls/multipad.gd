@@ -18,7 +18,6 @@ var host = null
 var mCanvas = null
 var mCentroid = Vector2(0, 0)
 var mIndex = -1
-var mPaddingPolygon = null
 var mWidget = {
 	"center": Vector2(0, 0),
 	"target": Vector2(0, 0)
@@ -32,8 +31,6 @@ func _ready():
 	mCanvas = get_node(canvas)
 	mCanvas.add_painter(self)
 	mCentroid = _compute_centroid()
-	var polygon_util = get_node("/root/vrc/polygon_util")
-	mPaddingPolygon = polygon_util.shrink_polygon(get_polygon(), 10)
 	inic()
 
 func _vrc_init(vrc_host_api):
@@ -86,8 +83,8 @@ func _canvas_input(event):
 		mCanvas.update()
 
 func _draw():
+	return
 	VisualServer.canvas_item_set_clip(get_canvas_item(), true)
-	draw_colored_polygon(mPaddingPolygon, Color(0, 0, 0, 0.5))
 	var vertices = get_polygon() 
 	for i in range(0, vertices.size()):
 		var p1 = vertices[i]
@@ -148,16 +145,15 @@ func draw_on_canvas(canvas):
 	#draw_circle5(mWidget.center, radius, 0, 360, color, 4)
 	mCanvas.draw_line(get_global_pos()+mCentroid, mWidget.center, get_color(), 4)
 	mCanvas.draw_circle(mWidget.center, radius, fg_color)
-	mCanvas.draw_circle(mWidget.center, radius-2, Color(0.5,0.5,0.5,1))
+	mCanvas.draw_circle(mWidget.center, radius-2, get_color())
 	if mode == "DPad":
 		var v = Vector2(0, radius).rotated(PI/8)
 		for i in range(0, 8):
 			v = v.rotated(PI/4 * i)
 			mCanvas.draw_line(mWidget.center, mWidget.center+v, fg_color, 2)
 	if threshold > 0:
-		var r = radius * threshold
-		mCanvas.draw_circle(mWidget.center, r, fg_color)
-		mCanvas.draw_circle(mWidget.center, r-2, Color(0.5,0.5,0.5,1))
+		mCanvas.draw_circle(mWidget.center, threshold, fg_color)
+		mCanvas.draw_circle(mWidget.center, threshold-1, get_color())
 	var vec = Vector2(0, 0)
 	if mode == "Stick" || mode == "DPad":
 		vec = mWidget.target - mWidget.center
