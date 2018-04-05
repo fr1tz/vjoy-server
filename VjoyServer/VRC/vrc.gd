@@ -11,8 +11,11 @@ const SEND_UPDATE_INTERVAL = 0.05
 
 var host = null
 
+var mSelectorWidgets = []
+var mControlWidgets = []
 var mMainPanel = null
 var mControlPanel = null
+var mServerName = ""
 var mControllerId = 0
 var mJoystickId = 0
 var mSendUpdateCountdown = SEND_UPDATE_INTERVAL
@@ -29,6 +32,7 @@ func _ready():
 	var vrc_host_api = get_meta("vrc_host_api")
 	if vrc_host_api == null:
 		vrc_host_api = get_node("/root/vrc_host_api_test_stub")
+		vrc_host_api.set_var("SERVER_NAME", "[No Server]")
 		vrc_host_api.set_var("CONTROLLER_ID", "123")
 		vrc_host_api.set_var("SEND_UPDATE_ADDR", "udp!127.0.0.1!1234")
 		vrc_host_api.set_var("ACTIVE_JOYSTICK_ID", "1")
@@ -46,11 +50,14 @@ func _vrc_init(vrc_host_api):
 	host = vrc_host_api
 	get_node("log_sender").start(host, "$0", "[L][NL][S][NL][Cfs][0]", [" | "," ¦ "," , "])
 	mControlPanel.connect("send_update", self, "_send_priority_update")
+	_on_var_changed("SERVER_NAME")
 	_on_var_changed("CONTROLLER_ID")
 	_on_var_changed("SEND_UPDATE_ADDR")
 	_on_var_changed("ACTIVE_JOYSTICK_ID")
 	for i in range(1, 17): _on_var_changed("JOYSTICK_STATUS/"+str(i))
 	host.connect("var_changed1", self, "_on_var_changed")
+	host.add_widget_factory("vJoy Selector", self, "create_selector_widget")
+	host.add_widget_factory("vJoy Control", self, "create_control_widget")
 	host.set_icon(get_node("icon").get_texture())
 	host.show_region(get_node("main_panel").get_rect())
 	host.log_notice(self, "ready")
@@ -58,7 +65,9 @@ func _vrc_init(vrc_host_api):
 func _on_var_changed(var_name):
 	host.log_debug(self, ["_on_var_changed():", var_name])
 	var var_value = host.get_var(var_name)
-	if var_name == "CONTROLLER_ID":
+	if var_name == "SERVER_NAME":
+		mServerName = var_value
+	elif var_name == "CONTROLLER_ID":
 		mControllerId = int(var_value)
 	elif var_name == "ACTIVE_JOYSTICK_ID":
 		mJoystickId = int(var_value)
@@ -140,6 +149,8 @@ func _send_update():
 	for i in range(0, 16):
 		state.buttons[i] = 0
 	mControlPanel.update_joystick_state(state)
+	for widget in mControlWidgets:
+		widget.update_joystick_state(state)
 	var axis_x = int((clamp(state.axis_x, -1, 1)*127))
 	var axis_y = int((clamp(state.axis_y, -1, 1)*127))
 	var axis_z = int((clamp(state.axis_z, -1, 1)*127))
@@ -182,11 +193,22 @@ func go_back():
 func activate_joystick():
 	mControlPanel.activate(mJoystickId)
 	set_fixed_process(true)
-	host.show_region(get_node("regions/control1").get_rect())
+	host.show_region(get_node("regions/control1").get_rect(), true)
 	host.log_notice(self, "joystick enabled")
 
 func deactivate_joystick():
 	mControlPanel.deactivate()
 	set_fixed_process(false)
-	host.show_region(get_node("regions/main").get_rect())
+	host.show_region(get_node("regions/main").get_rect(), false)
 	host.log_notice(self, "joystick disabled")
+
+func create_selector_widget():
+	var widget = load("res://widgets/selector_widget.tscn").instance()
+	widget.init(self, mServerName)
+	mSelectorWidgets.push_back(widget)
+	return widget
+
+func create_control_widget():
+	var widget = load("res://widgets/control_widget.tscn").instance()
+	mControlWidgets.push_back(widget)
+	return widget

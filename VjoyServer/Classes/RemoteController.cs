@@ -178,7 +178,11 @@ namespace VjoyServer
 
             string cmds = "";
             VjoyDevice[] vjoyDevices = Program.VjoyInterface.GetDevices();
-            foreach(VjoyDevice vjoyDevice in vjoyDevices)
+            cmds += string.Format("/set_var SERVER_NAME '{0}'\n", Environment.MachineName);
+            cmds += string.Format("/set_var CONTROLLER_ID '{0}'\n", GetControllerId());
+            cmds += string.Format("/set_var SEND_UPDATE_ADDR 'udp!$0!{0}'\n", Program.RemoteInterface.GetUdpPort());
+            cmds += string.Format("/set_var ACTIVE_JOYSTICK_ID '{0}'\n", 0);
+            foreach (VjoyDevice vjoyDevice in vjoyDevices)
             {
                 vjoyDevice.StatusChanged += VjoyDevice_StatusChanged;
                 vjoyDevice.ExportedChanged += VjoyDevice_StatusChanged;
@@ -186,9 +190,6 @@ namespace VjoyServer
                 string status = GetJoystickStatus(vjoyDevice);
                 cmds += string.Format("/set_var JOYSTICK_STATUS/{0} '{1}'\n", id, status);
             }             
-            cmds += string.Format("/set_var CONTROLLER_ID '{0}'\n", GetControllerId());
-            cmds += string.Format("/set_var SEND_UPDATE_ADDR 'udp!$0!{0}'\n", Program.RemoteInterface.GetUdpPort());
-            cmds += string.Format("/set_var ACTIVE_JOYSTICK_ID '{0}'\n", 0);
             cmds += string.Format("/load_vrc '{0}'\n", vrcData.Length);
             byte[] cmdsData = Encoding.UTF8.GetBytes(cmds);
 
@@ -214,7 +215,7 @@ namespace VjoyServer
                 {
                     bytes = this.tcpClient.GetStream().Read(buf, 0, buf.Length);
                 }
-                catch(System.IO.IOException e)
+                catch(Exception e)
                 {
                     Log(e.Message);
                     return;

@@ -137,7 +137,7 @@ func set_var(name, value):
 	emit_signal("var_changed3", name, value, old_value)
 	return ""
 
-func show_region(rect):
+func show_region(rect, fullscreen = false):
 	return ""
 
 func add_vhcp_extension(command_name, object, method):
