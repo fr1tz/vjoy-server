@@ -7,7 +7,7 @@
 
 extends Polygon2D
 
-export(String, "Stick", "DPad", "SingleButton", "DualButton") var mode
+export(String, "Stick", "DPad", "Button") var mode
 export(int) var radius = 64
 export(int) var threshold = 0
 export(Color) var fg_color = Color(1, 1, 1)
@@ -26,13 +26,19 @@ func _init():
 	add_user_signal("deactivated")
 
 func _ready():
+	host = get_meta("widget_host_api")
+	_visibility_changed()
+	connect("visibility_changed", self, "_visibility_changed")
 	mCentroid = _compute_centroid()
 	inic()
 
-func _widget_init(widget_host_api):
-	host = widget_host_api
-	host.enable_canvas_input(self)
-	host.enable_overlay_draw(self)
+func _visibility_changed():
+	if is_hidden():
+		host.disable_canvas_input(self)
+		host.disable_overlay_draw(self)
+	else:
+		host.enable_canvas_input(self)
+		host.enable_overlay_draw(self)
 
 func _compute_centroid():
 	var centroid = Vector2(0, 0)
@@ -147,6 +153,16 @@ func get_vec():
 		else:
 			ret = Vector2(-1, -1)
 		return ret
+
+func load_touchpad_config(touchpad_config):
+	if touchpad_config.mode == "stick":
+		mode = "Stick"
+	elif touchpad_config.mode == "dpad":
+		mode = "DPad"
+	else:
+		mode = "Button"
+	radius = touchpad_config.radius
+	threshold = touchpad_config.threshold
 
 #-------------------------------------------------------------------------------
 # Code below was copied from a post by user "lukas" (https://godotengine.org/qa/user/lukas)

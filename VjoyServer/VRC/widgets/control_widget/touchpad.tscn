@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=1]
 
-[ext_resource path="res://widgets/multipad.gd" type="Script" id=1]
+[ext_resource path="res://widgets/control_widget/touchpad.gd" type="Script" id=1]
 
-[node name="multipad" type="Polygon2D"]
+[node name="touchpad" type="Polygon2D"]
 
 transform/pos = Vector2( -200, 0 )
 polygon = Vector2Array( 200, 0, 430, 0, 430, 240, 200, 240 )
@@ -20,7 +20,6 @@ script/script = ExtResource( 1 )
 mode = "Stick"
 radius = 24
 threshold = 0
-canvas = NodePath("../canvas")
 fg_color = Color( 1, 1, 1, 1 )
 
 

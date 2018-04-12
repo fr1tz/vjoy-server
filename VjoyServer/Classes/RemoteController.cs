@@ -106,6 +106,13 @@ namespace VjoyServer
                 this.vjoyDevice.UpdateJoystickState();
         }
 
+        private void Remove()
+        {
+            if (this.vjoyDevice != null)
+                this.vjoyDevice.RemoveRemoteController(this);
+            this.vjoyDevice = null;
+        }
+
         private int DecodeInt7(byte b)
         {
             return (b & 127) * ((b & 128) == 0 ? 1 : -1);
@@ -142,6 +149,7 @@ namespace VjoyServer
                 catch (Exception e)
                 {
                     Log(e.Message);
+                    Remove();
                     return;
                 }
                 
@@ -218,6 +226,7 @@ namespace VjoyServer
                 catch(Exception e)
                 {
                     Log(e.Message);
+                    Remove();
                     return;
                 }              
                 string str = Encoding.UTF8.GetString(buf, 0, bytes);
@@ -242,20 +251,34 @@ namespace VjoyServer
         private void ProcessLogMsg(string level, string source, string content)
         {
             string[] source_nodes = source.Split(new char[] { '/' });
-            if (this.activeGui == Gui.OptionsScreen
-            && source_nodes.Last().StartsWith("button")
-            && content == "pressed")
+            if (source == "vrchost/vrc")
             {
-                uint id = uint.Parse(source_nodes.Last().Replace("button", ""));
-                this.vjoyDevice = Program.VjoyInterface.GetDevice(id);
-                if (this.vjoyDevice == null)
-                    return;
-                if (this.vjoyDevice.AddRemoteController(this) == false)
-                    return;
-                string cmd = string.Format("/set_var ACTIVE_JOYSTICK_ID '{0}'\n", id);
-                Send(cmd);
-                this.activeGui = Gui.JoystickScreen;
+                string[] words = content.Split(new char[] { ' ' });
+                if(words.Length == 2 && words[0] == "joystick_request")
+                {
+                    uint id = uint.Parse(words[1]);
+                    if(id == 0)
+                    {
+                        if (this.vjoyDevice != null)
+                            this.vjoyDevice.RemoveRemoteController(this);
+                        this.vjoyDevice = null;
+                    }
+                    else
+                    {
+                        VjoyDevice oldVjoyDevice = this.vjoyDevice;
+                        this.vjoyDevice = Program.VjoyInterface.GetDevice(id);
+                        if (this.vjoyDevice == null)
+                            return;
+                        if (this.vjoyDevice.AddRemoteController(this) == false)
+                            return;
+                        if (oldVjoyDevice != null)
+                            oldVjoyDevice.RemoveRemoteController(this);
+                    }
+                    string cmd = string.Format("/set_var ACTIVE_JOYSTICK_ID '{0}'\n", id);
+                    Send(cmd);
+                }
             }
+            /*
             else if (this.activeGui == Gui.JoystickScreen
             && source.EndsWith("vrc")
             && content == "joystick disabled")
@@ -267,6 +290,7 @@ namespace VjoyServer
                 Send(cmd);
                 this.activeGui = Gui.OptionsScreen;
             }
+            */
         }
 
         private string GetJoystickStatus(VjoyDevice vjoyDevice)

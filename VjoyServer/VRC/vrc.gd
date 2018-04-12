@@ -11,14 +11,15 @@ const SEND_UPDATE_INTERVAL = 0.05
 
 var host = null
 
-var mSelectorWidgets = []
-var mControlWidgets = []
-var mMainPanel = null
-var mControlPanel = null
 var mServerName = ""
 var mControllerId = 0
-var mJoystickId = 0
+var mActiveJoystickId = 0
+var mJoystickStatus = []
 var mSendUpdateCountdown = SEND_UPDATE_INTERVAL
+var mMainPanel = null
+var mControlPanel = null
+var mSelectorWidgets = []
+var mControlWidgets = []
 
 func _call_vrc_init(node, vrc_host_api):
 	if node.has_method("_vrc_init"):
@@ -27,6 +28,8 @@ func _call_vrc_init(node, vrc_host_api):
 		_call_vrc_init(c, vrc_host_api)
 
 func _ready():
+	for i in range(0, 16):
+		mJoystickStatus.push_back("unknown")
 	mMainPanel = get_node("main_panel")
 	mControlPanel = get_node("control_panel")
 	var vrc_host_api = get_meta("vrc_host_api")
@@ -41,11 +44,6 @@ func _ready():
 			vrc_host_api.set_var(("JOYSTICK_STATUS/"+str(i)), status[randi() % 3])
 	_call_vrc_init(self, vrc_host_api)
 
-func _fixed_process(delta):
-	mSendUpdateCountdown -= delta
-	if mSendUpdateCountdown <= 0:
-		_send_update()
-
 func _vrc_init(vrc_host_api):
 	host = vrc_host_api
 	get_node("log_sender").start(host, "$0", "[L][NL][S][NL][Cfs][0]", [" | "," ¦ "," , "])
@@ -54,7 +52,8 @@ func _vrc_init(vrc_host_api):
 	_on_var_changed("CONTROLLER_ID")
 	_on_var_changed("SEND_UPDATE_ADDR")
 	_on_var_changed("ACTIVE_JOYSTICK_ID")
-	for i in range(1, 17): _on_var_changed("JOYSTICK_STATUS/"+str(i))
+	for i in range(1, 17): 
+		_on_var_changed("JOYSTICK_STATUS/"+str(i))
 	host.connect("var_changed1", self, "_on_var_changed")
 	host.add_widget_factory("vJoy Selector", self, "create_selector_widget")
 	host.add_widget_factory("vJoy Control", self, "create_control_widget")
@@ -62,79 +61,68 @@ func _vrc_init(vrc_host_api):
 	host.show_region(get_node("main_panel").get_rect())
 	host.log_notice(self, "ready")
 
+func _fixed_process(delta):
+	mSendUpdateCountdown -= delta
+	if mSendUpdateCountdown <= 0:
+		_send_update()
+
 func _on_var_changed(var_name):
 	host.log_debug(self, ["_on_var_changed():", var_name])
 	var var_value = host.get_var(var_name)
 	if var_name == "SERVER_NAME":
-		mServerName = var_value
+		var server_name = var_value
+		_on_server_name_changed(server_name)
 	elif var_name == "CONTROLLER_ID":
-		mControllerId = int(var_value)
+		var controller_id = int(var_value)
+		_on_controller_id_changed(controller_id)
 	elif var_name == "ACTIVE_JOYSTICK_ID":
-		mJoystickId = int(var_value)
-		if mJoystickId > 0 && mJoystickId <= 16:
-			activate_joystick()
+		var active_joystick_id = int(var_value)
+		if is_valid_joystick_id(active_joystick_id):
+			_on_joystick_acquired(active_joystick_id)
 		else:
-			deactivate_joystick()
+			_on_joystick_released()
 	elif var_name.begins_with("JOYSTICK_STATUS/"):
 		var f = var_name.split("/")
 		var joystick_id = int(f[f.size()-1])
 		var status = var_value
-		mMainPanel.update_joystick_status(joystick_id, status)
+		_on_joystick_status_changed(joystick_id, status)
 
-func _encode_int7(val):
-	var negative = val < 0
-	val = int(abs(val)) 
-	var byte = val & 127
-	if negative:
-		byte = byte | 128
-	var b2 = val & 0xFF
-	return byte
+func _on_server_name_changed(server_name):
+	mServerName = server_name
 
-func _encode_int15(val):
-	var negative = val < 0
-	val = int(abs(val)) 
-	var b1 = val >> 8
-	if negative:
-		b1 = b1 | 128
-	var b2 = val & 0xFF
-	var bytes = RawArray()
-	bytes.append(b1)
-	bytes.append(b2)
-	return bytes
+func _on_controller_id_changed(controller_id):
+	mControllerId = controller_id
 
-func _encode_uint16(val):
-	var b1 = val >> 8
-	var b2 = val & 0xFF
-	var bytes = RawArray()
-	bytes.append(b1)
-	bytes.append(b2)
-	return bytes
+func _on_joystick_acquired(active_joystick_id):
+	mActiveJoystickId = active_joystick_id
+	mControlPanel.activate(mActiveJoystickId)
+	for widget in mSelectorWidgets:
+		widget.update_active_joystick_label(mActiveJoystickId)
+	set_fixed_process(true)
+	host.show_region(get_node("regions/control1").get_rect(), true)
+	host.log_notice(self, "controls_activated")
+
+func _on_joystick_released():
+	mActiveJoystickId = 0
+	mControlPanel.deactivate()
+	set_fixed_process(false)
+	host.show_region(get_node("regions/main").get_rect(), false)
+	host.log_notice(self, "controls_deactivated")
+
+func _on_joystick_status_changed(joystick_id, status):
+	if !is_valid_joystick_id(joystick_id):
+		return
+	mJoystickStatus[joystick_id-1] = status
+	mMainPanel.update_joystick_status(joystick_id, status)
 
 func _send_priority_update():
 	call_deferred("_send_update")
-#	var state = {
-#		"axis_x": 0,
-#		"axis_y": 0,
-#		"axis_z": 0,
-#		"axis_x_rot": -1,
-#		"axis_y_rot": -1,
-#		"axis_z_rot": 0,
-#		"slider1": -1,
-#		"slider2": -1,
-#		"buttons": []
-#	}
-#	state.buttons.resize(16)
-#	for i in range(0, 16):
-#		state.buttons[i] = 0
-#	for panel in mControlPanels.get_children():
-#		panel.update_joystick_state(state)
-#	prints("button 1 state:", state.buttons[0])
-#	_send_update()
 
 func _send_update():
-	if mJoystickId == 0:
+	if mActiveJoystickId == 0:
 		return
 	var state = {
+		"controller_id": mControllerId,
 		"axis_x": 0,
 		"axis_y": 0,
 		"axis_z": 0,
@@ -151,37 +139,8 @@ func _send_update():
 	mControlPanel.update_joystick_state(state)
 	for widget in mControlWidgets:
 		widget.update_joystick_state(state)
-	var axis_x = int((clamp(state.axis_x, -1, 1)*127))
-	var axis_y = int((clamp(state.axis_y, -1, 1)*127))
-	var axis_z = int((clamp(state.axis_z, -1, 1)*127))
-	var axis_x_rot = int((clamp(state.axis_x_rot, -1, 1)*127))
-	var axis_y_rot = int((clamp(state.axis_y_rot, -1, 1)*127))
-	var axis_z_rot = int((clamp(state.axis_z_rot, -1, 1)*127))
-	var slider1 = int((clamp(state.slider1, -1, 1)*127))
-	var slider2 = int((clamp(state.slider2, -1, 1)*127))
-	var buttons1 = 0
-	for i in range(0, 8):
-		buttons1 |= int(clamp(state.buttons[i], 0, 1)) << i
-	var buttons2 = 0
-	for i in range(0, 8):
-		buttons2 |= int(clamp(state.buttons[8+i], 0, 1)) << i
-	var data = RawArray()
-	data.append(10)
-	data.append_array(_encode_uint16(mControllerId))
-	data.append(_encode_int7(axis_x))
-	data.append(_encode_int7(axis_y))
-	data.append(_encode_int7(axis_z))
-	data.append(_encode_int7(axis_x_rot))
-	data.append(_encode_int7(axis_y_rot))
-	data.append(_encode_int7(axis_z_rot))
-	data.append(_encode_int7(slider1))
-	data.append(_encode_int7(slider2))
-	data.append(buttons1)
-	data.append(buttons2)
-	data.append(0)
-	data.append(0)
-	data.append(0)
-	host.send(data, host.get_var("SEND_UPDATE_ADDR"))
+	var addr = host.get_var("SEND_UPDATE_ADDR")
+	get_node("net").send_joystick_state(state, addr)
 	mSendUpdateCountdown = SEND_UPDATE_INTERVAL
 
 func go_back():
@@ -190,25 +149,52 @@ func go_back():
 		return true
 	return false
 
-func activate_joystick():
-	mControlPanel.activate(mJoystickId)
-	set_fixed_process(true)
-	host.show_region(get_node("regions/control1").get_rect(), true)
-	host.log_notice(self, "joystick enabled")
+func request_joystick(joystick_id):
+	host.log_notice(self, "joystick_request " + str(joystick_id))
 
-func deactivate_joystick():
-	mControlPanel.deactivate()
-	set_fixed_process(false)
-	host.show_region(get_node("regions/main").get_rect(), false)
-	host.log_notice(self, "joystick disabled")
+func is_valid_joystick_id(joystick_id):
+	return joystick_id >= 1 && joystick_id <= 16
+
+func get_server_name():
+	return mServerName
+
+func get_active_joystick():
+	return mActiveJoystickId
+
+func get_joystick_status(joystick_id):
+	if !is_valid_joystick_id(joystick_id):
+		return "unknown"
+	return mJoystickStatus[joystick_id-1]
+
+func request_next_joystick():
+	var next_available_joystick_id = 0
+	var id = mActiveJoystickId + 1
+	while is_valid_joystick_id(id):
+		var status = get_joystick_status(id)
+		if status == "free" || status == "taken":
+			next_available_joystick_id = id
+			break
+		id += 1
+	request_joystick(next_available_joystick_id)
+
+func request_prev_joystick():
+	var next_available_joystick_id = 0
+	var id = mActiveJoystickId - 1
+	while is_valid_joystick_id(id):
+		var status = get_joystick_status(id)
+		if status == "free" || status == "taken":
+			next_available_joystick_id = id
+			break
+		id -= 1
+	request_joystick(next_available_joystick_id)
 
 func create_selector_widget():
-	var widget = load("res://widgets/selector_widget.tscn").instance()
-	widget.init(self, mServerName)
+	var widget = load("res://widgets/selector_widget/selector_widget.tscn").instance()
+	widget.init(self)
 	mSelectorWidgets.push_back(widget)
 	return widget
 
 func create_control_widget():
-	var widget = load("res://widgets/control_widget.tscn").instance()
+	var widget = load("res://widgets/control_widget/control_widget.tscn").instance()
 	mControlWidgets.push_back(widget)
 	return widget

@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=1]
+[gd_scene load_steps=9 format=1]
 
-[ext_resource path="res://widgets/control_widget.gd" type="Script" id=1]
+[ext_resource path="res://widgets/control_widget/main_gui.gd" type="Script" id=1]
 [ext_resource path="res://widgets/graphics/border.png" type="Texture" id=2]
-[ext_resource path="res://widgets/graphics/xy.png" type="Texture" id=3]
-[ext_resource path="res://widgets/multipad.tscn" type="PackedScene" id=4]
+[ext_resource path="res://widgets/graphics/pad.rect.png" type="Texture" id=3]
+[ext_resource path="res://widgets/graphics/pad.dsplit.png" type="Texture" id=4]
+[ext_resource path="res://widgets/control_widget/touchpad.tscn" type="PackedScene" id=5]
 
 [sub_resource type="StyleBoxFlat" id=1]
 
@@ -48,22 +49,7 @@ expand_margin/top = 0.0
 expand_margin/bottom = 0.0
 draw_center = true
 
-[node name="control_widget" type="Node"]
-
-script/script = ExtResource( 1 )
-
-[node name="main_canvas" type="Control" parent="."]
-
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 0.0
-margin/right = 200.0
-margin/bottom = 200.0
-
-[node name="widget" type="Panel" parent="main_canvas"]
+[node name="main_gui" type="Panel"]
 
 focus/ignore_mouse = false
 focus/stop_mouse = true
@@ -74,8 +60,9 @@ margin/top = 0.0
 margin/right = 200.0
 margin/bottom = 200.0
 custom_styles/panel = SubResource( 1 )
+script/script = ExtResource( 1 )
 
-[node name="Panel" type="Panel" parent="main_canvas/widget"]
+[node name="Panel" type="Panel" parent="."]
 
 anchor/right = 1
 anchor/bottom = 1
@@ -89,8 +76,9 @@ margin/right = 4.0
 margin/bottom = 4.0
 custom_styles/panel = SubResource( 2 )
 
-[node name="panel" type="Panel" parent="main_canvas/widget"]
+[node name="panel" type="Panel" parent="."]
 
+visibility/visible = false
 anchor/right = 1
 anchor/bottom = 1
 focus/ignore_mouse = false
@@ -103,7 +91,7 @@ margin/right = 8.0
 margin/bottom = 8.0
 custom_styles/panel = SubResource( 3 )
 
-[node name="TextureFrame" type="TextureFrame" parent="main_canvas/widget"]
+[node name="pad_rect" type="TextureFrame" parent="."]
 
 anchor/right = 1
 anchor/bottom = 1
@@ -111,18 +99,47 @@ focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 0.0
-margin/right = 0.0
-margin/bottom = 0.0
+margin/left = 5.0
+margin/top = 5.0
+margin/right = 5.0
+margin/bottom = 5.0
 texture = ExtResource( 3 )
 stretch_mode = 0
 
-[node name="multipad" parent="main_canvas/widget" instance=ExtResource( 4 )]
+[node name="pad_dsplit" type="TextureFrame" parent="."]
+
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 5.0
+margin/top = 5.0
+margin/right = 5.0
+margin/bottom = 5.0
+texture = ExtResource( 4 )
+stretch_mode = 0
+
+[node name="pad0" parent="." instance=ExtResource( 5 )]
 
 visibility/blend_mode = 3
-transform/pos = Vector2( 0, 0 )
-polygon = Vector2Array( 5, 5, 195, 5, 195, 195, 5, 195 )
-color = Color( 0.40625, 1, 0.596436, 1 )
+transform/pos = Vector2( 0, -0.35849 )
+polygon = Vector2Array( 5, 5.35849, 195, 5.35849, 195, 195, 5, 195 )
+color = Color( 0.458824, 0.784314, 1, 1 )
+
+[node name="pad1" parent="." instance=ExtResource( 5 )]
+
+visibility/blend_mode = 3
+transform/pos = Vector2( 0, -0.35849 )
+polygon = Vector2Array( 5, 5, 195, 195, 5, 195 )
+color = Color( 0.458824, 0.784314, 1, 1 )
+
+[node name="pad2" parent="." instance=ExtResource( 5 )]
+
+visibility/blend_mode = 3
+transform/pos = Vector2( 0, -0.35849 )
+polygon = Vector2Array( 5, 5, 195, 5, 195, 195 )
+color = Color( 0.460938, 0.785217, 1, 1 )
 
 

@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=1]
+[gd_scene load_steps=11 format=1]
 
-[ext_resource path="res://widgets/selector_widget.gd" type="Script" id=1]
-[ext_resource path="res://fonts/lcd/LCD14.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://widgets/selector_widget/selector_widget.gd" type="Script" id=1]
+[ext_resource path="res://fonts/ponyo/Ponyo.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://fonts/lcd/LCD14.otf" type="DynamicFontData" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
 
@@ -44,19 +45,33 @@ draw_bg = true
 
 [sub_resource type="DynamicFont" id=4]
 
-font/size = 24
+font/size = 12
 font/use_mipmaps = false
 font/use_filter = false
 font/font = ExtResource( 2 )
 
-[sub_resource type="StyleBoxEmpty" id=5]
+[sub_resource type="DynamicFont" id=5]
+
+font/size = 24
+font/use_mipmaps = false
+font/use_filter = false
+font/font = ExtResource( 3 )
+
+[sub_resource type="StyleBoxEmpty" id=6]
 
 content_margin/left = -1.0
 content_margin/right = -1.0
 content_margin/top = -1.0
 content_margin/bottom = -1.0
 
-[node name="selector_widget" type="Node"]
+[sub_resource type="DynamicFont" id=7]
+
+font/size = 42
+font/use_mipmaps = false
+font/use_filter = false
+font/font = ExtResource( 2 )
+
+[node name="widget" type="Node"]
 
 script/script = ExtResource( 1 )
 
@@ -85,7 +100,7 @@ margin/right = 0.0
 margin/bottom = 0.0
 custom_styles/panel = SubResource( 1 )
 
-[node name="panel" type="Panel" parent="main_canvas/widget"]
+[node name="panel" type="Panel" parent="main_canvas"]
 
 anchor/right = 1
 anchor/bottom = 1
@@ -99,7 +114,7 @@ margin/right = 4.0
 margin/bottom = 4.0
 custom_styles/panel = SubResource( 2 )
 
-[node name="panel1" type="Panel" parent="main_canvas/widget"]
+[node name="panel1" type="Panel" parent="main_canvas"]
 
 focus/ignore_mouse = false
 focus/stop_mouse = true
@@ -111,7 +126,7 @@ margin/right = 100.0
 margin/bottom = 70.0
 custom_styles/panel = SubResource( 3 )
 
-[node name="server_name_label" type="Label" parent="main_canvas/widget"]
+[node name="server_name_label" type="Label" parent="main_canvas"]
 
 focus/ignore_mouse = true
 focus/stop_mouse = true
@@ -120,14 +135,16 @@ size_flags/vertical = 0
 margin/left = 10.0
 margin/top = 10.0
 margin/right = 150.0
-margin/bottom = 24.0
+margin/bottom = 22.0
+custom_fonts/font = SubResource( 4 )
 text = "Server Name"
+align = 1
 clip_text = true
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="joystick_id" type="Label" parent="main_canvas/widget"]
+[node name="joystick_id" type="Label" parent="main_canvas"]
 
 focus/ignore_mouse = true
 focus/stop_mouse = true
@@ -137,7 +154,7 @@ margin/left = 60.0
 margin/top = 30.0
 margin/right = 100.0
 margin/bottom = 70.0
-custom_fonts/font = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
 text = "00"
 align = 1
 valign = 1
@@ -145,7 +162,7 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="decrease_button" type="Button" parent="main_canvas/widget"]
+[node name="decrease_button" type="Button" parent="main_canvas"]
 
 focus/ignore_mouse = false
 focus/stop_mouse = true
@@ -155,18 +172,19 @@ margin/left = 10.0
 margin/top = 30.0
 margin/right = 50.0
 margin/bottom = 70.0
-custom_styles/hover = SubResource( 5 )
-custom_styles/pressed = SubResource( 5 )
-custom_styles/focus = SubResource( 5 )
-custom_styles/disabled = SubResource( 5 )
-custom_styles/normal = SubResource( 5 )
+custom_styles/hover = SubResource( 6 )
+custom_styles/pressed = SubResource( 6 )
+custom_styles/focus = SubResource( 6 )
+custom_styles/disabled = SubResource( 6 )
+custom_styles/normal = SubResource( 6 )
+custom_fonts/font = SubResource( 7 )
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 text = "-"
 flat = false
 
-[node name="increase_button" type="Button" parent="main_canvas/widget"]
+[node name="increase_button" type="Button" parent="main_canvas"]
 
 focus/ignore_mouse = false
 focus/stop_mouse = true
@@ -176,30 +194,16 @@ margin/left = 110.0
 margin/top = 30.0
 margin/right = 150.0
 margin/bottom = 70.0
-custom_styles/hover = SubResource( 5 )
-custom_styles/pressed = SubResource( 5 )
-custom_styles/focus = SubResource( 5 )
-custom_styles/disabled = SubResource( 5 )
-custom_styles/normal = SubResource( 5 )
+custom_styles/hover = SubResource( 6 )
+custom_styles/pressed = SubResource( 6 )
+custom_styles/focus = SubResource( 6 )
+custom_styles/disabled = SubResource( 6 )
+custom_styles/normal = SubResource( 6 )
+custom_fonts/font = SubResource( 7 )
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 text = "+"
-flat = false
-
-[node name="CheckButton" type="CheckButton" parent="main_canvas/widget"]
-
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 150.0
-margin/top = 80.0
-margin/right = 226.0
-margin/bottom = 120.0
-toggle_mode = true
-enabled_focus_mode = 2
-shortcut = null
 flat = false
 
 
