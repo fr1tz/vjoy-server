@@ -7,25 +7,24 @@
 
 extends ColorFrame
 
-var host = null
+var mVrc = null
+var mVrcHost = null
 
 func _init():
 	add_user_signal("send_update")
 
-func _vrc_init(vrc_host_api):
-	host = vrc_host_api
+func _vrc_init(vrc, vrc_mVrcHost_api):
+	mVrc = vrc
+	mVrcHost = vrc_mVrcHost_api
 
 func _send_update():
 	emit_signal("send_update")
 
 func update_joystick_state(state):
-	var vec = get_node("pad1").get_vec()
-#	if vec.length() > 0.1:
-#		vec = vec.normalized()
-#	else:
-#		vec = Vector2(0, 0)
-	state.axis_x += vec.x
-	state.axis_y += vec.y
+	if get_node("pad1").is_active():
+		var vec = get_node("pad1").get_vec()
+		state.axis_x = vec.x
+		state.axis_y = vec.y
 	if get_node("pad2").is_active():
 		state.buttons[0] += 1
 	if get_node("pad3").is_active():

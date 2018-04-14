@@ -98,8 +98,8 @@ namespace VjoyServer
                 for (int i = 0; i < 8; i++)
                     this.joystickState.buttons[8 + i] = (data[12] & (1 << i)) > 0;
 
-                if (old_button_state != this.joystickState.buttons[0])
-                    Program.Log.AddEntry(string.Format("Button 1 state: {0}", this.joystickState.buttons[0]));
+                //if (old_button_state != this.joystickState.buttons[0])
+                //    Program.Log.AddEntry(string.Format("Button 1 state: {0}", this.joystickState.buttons[0]));
             }
 
             if (this.vjoyDevice != null)

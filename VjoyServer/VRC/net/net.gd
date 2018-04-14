@@ -2,7 +2,7 @@ extends Node
 
 var host = null
 
-func _vrc_init(vrc_host_api):
+func _vrc_init(vrc, vrc_host_api):
 	host = vrc_host_api
 
 func encode_int7(val):

@@ -7,26 +7,30 @@
 
 extends ReferenceFrame
 
-var host = null
+var mVrc = null
+var mVrcHost = null
 
 onready var mButtons = get_node("buttons")
 
 func _on_button_pressed(button):
-	host.log_notice(button, "pressed")
+	var button_num = button.get_position_in_parent() + 1
+	mVrc.request_joystick(button_num)
+	mVrcHost.log_notice(button, "pressed")
 
 func _on_vrc_displayed(vrc):
 	if vrc == self:
-		host.log_notice(self, "displayed")
+		mVrcHost.log_notice(self, "displayed")
 
 func _on_vrc_concealed(vrc):
 	if vrc == self:
-		host.log_notice(self, "concealed")
+		mVrcHost.log_notice(self, "concealed")
 
-func _vrc_init(vrc_host_api):
-	host = vrc_host_api
-	host.connect("vrc_displayed", self, "_on_vrc_displayed")
-	host.connect("vrc_concealed", self, "_on_vrc_concealed")
-	host.connect("var_changed1", self, "_on_var_changed")
+func _vrc_init(vrc, vrc_mVrcHost_api):
+	mVrc = vrc
+	mVrcHost = vrc_mVrcHost_api
+	mVrcHost.connect("vrc_displayed", self, "_on_vrc_displayed")
+	mVrcHost.connect("vrc_concealed", self, "_on_vrc_concealed")
+	mVrcHost.connect("var_changed1", self, "_on_var_changed")
 	for i in range(1, 17):
 		var button = mButtons.get_child(i-1)
 		button.set_label(str(i))

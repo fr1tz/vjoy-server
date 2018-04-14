@@ -30,6 +30,13 @@ border_size = 1
 border_blend = true
 draw_bg = false
 
+[sub_resource type="DynamicFont" id=4]
+
+font/size = 12
+font/use_mipmaps = false
+font/use_filter = false
+font/font = ExtResource( 2 )
+
 [sub_resource type="StyleBoxFlat" id=3]
 
 content_margin/left = -1.0
@@ -42,13 +49,6 @@ dark_color = Color( 0.84375, 0.84375, 0.84375, 1 )
 border_size = 1
 border_blend = true
 draw_bg = true
-
-[sub_resource type="DynamicFont" id=4]
-
-font/size = 12
-font/use_mipmaps = false
-font/use_filter = false
-font/font = ExtResource( 2 )
 
 [sub_resource type="DynamicFont" id=5]
 
@@ -83,7 +83,7 @@ size_flags/horizontal = 2
 size_flags/vertical = 2
 margin/left = 0.0
 margin/top = 0.0
-margin/right = 160.0
+margin/right = 120.0
 margin/bottom = 80.0
 
 [node name="widget" type="Panel" parent="main_canvas"]
@@ -114,28 +114,17 @@ margin/right = 4.0
 margin/bottom = 4.0
 custom_styles/panel = SubResource( 2 )
 
-[node name="panel1" type="Panel" parent="main_canvas"]
-
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 60.0
-margin/top = 30.0
-margin/right = 100.0
-margin/bottom = 70.0
-custom_styles/panel = SubResource( 3 )
-
 [node name="server_name_label" type="Label" parent="main_canvas"]
 
+anchor/right = 1
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = 10.0
-margin/top = 10.0
-margin/right = 150.0
-margin/bottom = 22.0
+margin/left = 7.0
+margin/top = 9.0
+margin/right = 7.0
+margin/bottom = 21.0
 custom_fonts/font = SubResource( 4 )
 text = "Server Name"
 align = 1
@@ -144,16 +133,47 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
+[node name="widget_label" type="Label" parent="main_canvas"]
+
+anchor/right = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 7.0
+margin/top = 24.0
+margin/right = 7.0
+margin/bottom = 36.0
+custom_fonts/font = SubResource( 4 )
+text = "vJoy Selector"
+align = 1
+clip_text = true
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="panel1" type="Panel" parent="main_canvas"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 40.0
+margin/top = 41.0
+margin/right = 80.0
+margin/bottom = 69.0
+custom_styles/panel = SubResource( 3 )
+
 [node name="joystick_id" type="Label" parent="main_canvas"]
 
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = 60.0
-margin/top = 30.0
-margin/right = 100.0
-margin/bottom = 70.0
+margin/left = 40.0
+margin/top = 34.0
+margin/right = 80.0
+margin/bottom = 74.0
 custom_fonts/font = SubResource( 5 )
 text = "00"
 align = 1
@@ -168,10 +188,10 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 10.0
-margin/top = 30.0
-margin/right = 50.0
-margin/bottom = 70.0
+margin/left = 5.0
+margin/top = 35.0
+margin/right = 45.0
+margin/bottom = 75.0
 custom_styles/hover = SubResource( 6 )
 custom_styles/pressed = SubResource( 6 )
 custom_styles/focus = SubResource( 6 )
@@ -190,10 +210,10 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 110.0
-margin/top = 30.0
-margin/right = 150.0
-margin/bottom = 70.0
+margin/left = 75.0
+margin/top = 35.0
+margin/right = 115.0
+margin/bottom = 75.0
 custom_styles/hover = SubResource( 6 )
 custom_styles/pressed = SubResource( 6 )
 custom_styles/focus = SubResource( 6 )

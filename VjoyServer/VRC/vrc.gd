@@ -21,11 +21,11 @@ var mControlPanel = null
 var mSelectorWidgets = []
 var mControlWidgets = []
 
-func _call_vrc_init(node, vrc_host_api):
+func _call_vrc_init(node, vrc, vrc_host_api):
 	if node.has_method("_vrc_init"):
-		node._vrc_init(vrc_host_api)
+		node._vrc_init(vrc, vrc_host_api)
 	for c in node.get_children():
-		_call_vrc_init(c, vrc_host_api)
+		_call_vrc_init(c, vrc, vrc_host_api)
 
 func _ready():
 	for i in range(0, 16):
@@ -42,9 +42,9 @@ func _ready():
 		for i in range(1, 17):
 			var status = [ "free", "taken", "" ]
 			vrc_host_api.set_var(("JOYSTICK_STATUS/"+str(i)), status[randi() % 3])
-	_call_vrc_init(self, vrc_host_api)
+	_call_vrc_init(self, self, vrc_host_api)
 
-func _vrc_init(vrc_host_api):
+func _vrc_init(vrc, vrc_host_api):
 	host = vrc_host_api
 	get_node("log_sender").start(host, "$0", "[L][NL][S][NL][Cfs][0]", [" | "," ¦ "," , "])
 	mControlPanel.connect("send_update", self, "_send_priority_update")
@@ -55,8 +55,9 @@ func _vrc_init(vrc_host_api):
 	for i in range(1, 17): 
 		_on_var_changed("JOYSTICK_STATUS/"+str(i))
 	host.connect("var_changed1", self, "_on_var_changed")
-	host.add_widget_factory("vJoy Selector", self, "create_selector_widget")
-	host.add_widget_factory("vJoy Control", self, "create_control_widget")
+	var product_id_prefix = mServerName.to_lower()+".vjoy_controller."
+	host.add_widget_factory(product_id_prefix+"selector", "vJoy Selector", self, "create_selector_widget")
+	host.add_widget_factory(product_id_prefix+"control", "vJoy Control", self, "create_control_widget")
 	host.set_icon(get_node("icon").get_texture())
 	host.show_region(get_node("main_panel").get_rect())
 	host.log_notice(self, "ready")
@@ -98,6 +99,8 @@ func _on_joystick_acquired(active_joystick_id):
 	mControlPanel.activate(mActiveJoystickId)
 	for widget in mSelectorWidgets:
 		widget.update_active_joystick_label(mActiveJoystickId)
+	for widget in mControlWidgets:
+		widget.get_main_gui().turn_on()
 	set_fixed_process(true)
 	host.show_region(get_node("regions/control1").get_rect(), true)
 	host.log_notice(self, "controls_activated")
@@ -105,6 +108,10 @@ func _on_joystick_acquired(active_joystick_id):
 func _on_joystick_released():
 	mActiveJoystickId = 0
 	mControlPanel.deactivate()
+	for widget in mSelectorWidgets:
+		widget.update_active_joystick_label(0)
+	for widget in mControlWidgets:
+		widget.get_main_gui().turn_off()
 	set_fixed_process(false)
 	host.show_region(get_node("regions/main").get_rect(), false)
 	host.log_notice(self, "controls_deactivated")
@@ -126,11 +133,11 @@ func _send_update():
 		"axis_x": 0,
 		"axis_y": 0,
 		"axis_z": 0,
-		"axis_x_rot": -1,
-		"axis_y_rot": -1,
+		"axis_x_rot": 0,
+		"axis_y_rot": 0,
 		"axis_z_rot": 0,
-		"slider1": -1,
-		"slider2": -1,
+		"slider1": 0,
+		"slider2": 0,
 		"buttons": []
 	}
 	state.buttons.resize(16)
@@ -144,8 +151,8 @@ func _send_update():
 	mSendUpdateCountdown = SEND_UPDATE_INTERVAL
 
 func go_back():
-	if host.get_var("ACTIVE_JOYSTICK_ID") != "0":
-		deactivate_joystick()
+	if mActiveJoystickId != 0:
+		request_joystick(0)
 		return true
 	return false
 
@@ -196,5 +203,6 @@ func create_selector_widget():
 
 func create_control_widget():
 	var widget = load("res://widgets/control_widget/control_widget.tscn").instance()
+	widget.init(self)
 	mControlWidgets.push_back(widget)
 	return widget

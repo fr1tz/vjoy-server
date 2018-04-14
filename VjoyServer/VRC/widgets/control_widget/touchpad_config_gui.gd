@@ -9,6 +9,8 @@ extends Control
 
 var mTouchpadConfig = null
 
+onready var mTabs = get_node("tabs")
+
 func _ready():
 	get_node("mode_buttons").connect("button_selected", self, "_mode_button_selected")
 
@@ -19,13 +21,16 @@ func _mode_button_selected(button_idx):
 		mTouchpadConfig.mode = "dpad"
 	elif button_idx == 2:
 		mTouchpadConfig.mode = "button"
-	get_meta("widget_root_node").widget_config_changed()
+	mTabs.set_current_tab(button_idx)
+	get_meta("widget_root_node").get_main_gui().reload_widget_config()
 
 func load_touchpad_config(touchpad_config):
 	mTouchpadConfig = touchpad_config
+	get_node("tabs/stick_config_gui").load_stick_config(touchpad_config.stick_config)
+	get_node("tabs/dpad_config_gui").load_dpad_config(touchpad_config.dpad_config)
+	get_node("tabs/button_config_gui").load_button_config(touchpad_config.button_config)
 	if mTouchpadConfig.mode == "stick":
 		get_node("mode_buttons").set_selected(0)
-		get_node("TabContainer/stick_config_gui").load_touchpad_config(touchpad_config)
 	elif mTouchpadConfig.mode == "dpad":
 		get_node("mode_buttons").set_selected(1)
 	elif mTouchpadConfig.mode == "button":

@@ -13,6 +13,7 @@ var mVrc = null
 
 func _ready():
 	host = get_meta("widget_host_api")
+	update_active_joystick_label(mVrc.get_active_joystick())
 	get_node("main_canvas/increase_button").connect("pressed", self, "request_next_joystick")
 	get_node("main_canvas/decrease_button").connect("pressed", self, "request_prev_joystick")
 

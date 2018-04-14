@@ -33,7 +33,7 @@ func _ready():
 	mCentroid = _compute_centroid()
 	inic()
 
-func _vrc_init(vrc_host_api):
+func _vrc_init(vrc, vrc_host_api):
 	host = vrc_host_api
 	host.enable_canvas_input(self)
 

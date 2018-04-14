@@ -23,7 +23,7 @@ func _num_pads_button_selected(button_idx):
 		mWidgetConfig.num_pads = 2
 		get_node("configure_pad2_button").set_hidden(false)
 		get_node("configure_pad2_button").set_hidden(false)
-	get_meta("widget_root_node").widget_config_changed()
+	get_meta("widget_root_node").get_main_gui().reload_widget_config()
 
 func configure_pad(pad_idx):
 	var touchpad_config = mWidgetConfig.pad_configs[pad_idx]

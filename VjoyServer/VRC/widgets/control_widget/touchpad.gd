@@ -14,6 +14,7 @@ export(Color) var fg_color = Color(1, 1, 1)
 
 var host = null
 
+var mTouchpadConfig = null
 var mCentroid = Vector2(0, 0)
 var mIndex = -1
 var mWidget = {
@@ -87,9 +88,6 @@ func _canvas_input(event):
 func _overlay_draw(overlay):
 	if !is_active():
 		return
-	overlay.draw_circle(Vector2(0,0), 5, Color(1,0,0,1))
-	overlay.draw_circle(Vector2(200,200), 5, Color(0,1,0,1))
-	overlay.draw_circle(mWidget.target, 5, Color(1,1,1,1))
 	overlay.draw_line(get_global_pos()+mCentroid, mWidget.center, get_color(), 4)
 	overlay.draw_circle(mWidget.center, radius, fg_color)
 	overlay.draw_circle(mWidget.center, radius-2, get_color())
@@ -155,14 +153,57 @@ func get_vec():
 		return ret
 
 func load_touchpad_config(touchpad_config):
-	if touchpad_config.mode == "stick":
+	mTouchpadConfig = touchpad_config
+	if mTouchpadConfig.mode == "stick":
 		mode = "Stick"
-	elif touchpad_config.mode == "dpad":
+		radius = mTouchpadConfig.stick_config.radius
+		threshold = mTouchpadConfig.stick_config.threshold
+	elif mTouchpadConfig.mode == "dpad":
 		mode = "DPad"
+		radius = mTouchpadConfig.dpad_config.radius
+		threshold = mTouchpadConfig.dpad_config.threshold
 	else:
 		mode = "Button"
-	radius = touchpad_config.radius
-	threshold = touchpad_config.threshold
+		radius = 16
+		threshold = 0
+
+func update_joystick_state(state):
+	if mTouchpadConfig.mode == "stick":
+		var vec = get_vec()
+		var x_action = mTouchpadConfig.stick_config.x_action
+		if x_action == "axis_x":
+			state.axis_x += vec.x
+		elif x_action == "axis_y":
+			state.axis_y += vec.x
+		elif x_action == "axis_z":
+			state.axis_z += vec.x
+		elif x_action == "axis_x_rot":
+			state.axis_x_rot += vec.x
+		elif x_action == "axis_y_rot":
+			state.axis_y_rot += vec.x
+		elif x_action == "axis_z_rot":
+			state.axis_z_rot += vec.x
+		var y_action = mTouchpadConfig.stick_config.y_action
+		if y_action == "axis_x":
+			state.axis_x += vec.y
+		elif y_action == "axis_y":
+			state.axis_y += vec.y
+		elif y_action == "axis_z":
+			state.axis_z += vec.y
+		elif y_action == "axis_x_rot":
+			state.axis_x_rot += vec.y
+		elif y_action == "axis_y_rot":
+			state.axis_y_rot += vec.y
+		elif y_action == "axis_z_rot":
+			state.axis_z_rot += vec.y
+	elif mTouchpadConfig.mode == "dpad":
+		var vec = get_vec()
+		state.axis_x += vec.x
+		state.axis_y += vec.y
+	elif mTouchpadConfig.mode == "button":
+		if is_active():
+			var button_num = mTouchpadConfig.button_config.button_num
+			state.buttons[button_num-1] += 1
 
 #-------------------------------------------------------------------------------
 # Code below was copied from a post by user "lukas" (https://godotengine.org/qa/user/lukas)

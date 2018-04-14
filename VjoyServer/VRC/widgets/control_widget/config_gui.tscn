@@ -73,7 +73,7 @@ button/0/icon = null
 button/1/text = "2"
 button/1/tooltip = ""
 button/1/icon = null
-button/selected = 1
+button/selected = 0
 
 [node name="configure_pad1_button" type="Button" parent="."]
 
@@ -97,6 +97,7 @@ flat = false
 
 [node name="configure_pad2_button" type="Button" parent="."]
 
+visibility/visible = false
 focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
