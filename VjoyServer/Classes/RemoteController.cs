@@ -27,7 +27,7 @@ namespace VjoyServer
 {
     public class RemoteController
     {
-        const string vrcFileName = "vJoyServerVRC.tar";
+        const string vrcFileName = "vJoyVRC.tar";
 
         TcpClient tcpClient;
         IPAddress address;

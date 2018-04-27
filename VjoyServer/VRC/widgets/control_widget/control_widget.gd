@@ -16,6 +16,9 @@ onready var mConfigGui = get_node("config_canvas/config_gui")
 
 func _ready():
 	mVrcHost = get_meta("widget_host_api")
+	var basic_config = {
+		"num_pads": 1
+	}
 	var pad1config = {
 		"mode": "stick",
 		"stick_config": {
@@ -49,7 +52,7 @@ func _ready():
 		}
 	}
 	mWidgetConfig = {
-		"num_pads": 1,
+		"basic_config": basic_config,
 		"pad_configs": [ pad1config, pad2config ]
 	}
 	mMainGui.load_widget_config(mWidgetConfig)

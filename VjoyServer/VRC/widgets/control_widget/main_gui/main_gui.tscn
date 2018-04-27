@@ -1,0 +1,250 @@
+[gd_scene load_steps=9 format=1]
+
+[ext_resource path="res://widgets/control_widget/main_gui/main_gui.gd" type="Script" id=1]
+[ext_resource path="res://widgets/graphics/pad.rect.png" type="Texture" id=2]
+[ext_resource path="res://widgets/graphics/pad.dsplit.png" type="Texture" id=3]
+[ext_resource path="res://widgets/graphics/stick.png" type="Texture" id=4]
+[ext_resource path="res://widgets/graphics/1pad.png" type="Texture" id=5]
+[ext_resource path="res://widgets/graphics/dualpad.png" type="Texture" id=6]
+[ext_resource path="res://widgets/control_widget/main_gui/touchpad.tscn" type="PackedScene" id=7]
+
+[sub_resource type="StyleBoxFlat" id=1]
+
+content_margin/left = -1.0
+content_margin/right = -1.0
+content_margin/top = -1.0
+content_margin/bottom = -1.0
+bg_color = Color( 0, 0, 0, 1 )
+light_color = Color( 0.226563, 0.226563, 0.226563, 1 )
+dark_color = Color( 0.84375, 0.84375, 0.84375, 1 )
+border_size = 1
+border_blend = true
+draw_bg = true
+
+[node name="main_gui" type="ReferenceFrame"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 40.0
+margin/bottom = 40.0
+script/script = ExtResource( 1 )
+
+[node name="textures" type="Panel" parent="."]
+
+visibility/visible = false
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 5.0
+margin/top = 5.0
+margin/right = 5.0
+margin/bottom = 5.0
+custom_styles/panel = SubResource( 1 )
+
+[node name="rect" type="TextureFrame" parent="textures"]
+
+visibility/visible = false
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 0.0
+texture = ExtResource( 2 )
+stretch_mode = 0
+
+[node name="dsplit" type="TextureFrame" parent="textures"]
+
+visibility/visible = false
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 0.0
+texture = ExtResource( 3 )
+stretch_mode = 0
+
+[node name="stick" type="TextureFrame" parent="textures"]
+
+visibility/visible = false
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 0.0
+texture = ExtResource( 4 )
+stretch_mode = 0
+
+[node name="monopad_background" type="TextureFrame" parent="."]
+
+visibility/visible = false
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 5.0
+margin/top = 5.0
+margin/right = 5.0
+margin/bottom = 5.0
+texture = ExtResource( 5 )
+stretch_mode = 0
+
+[node name="rect" type="TextureFrame" parent="monopad_background"]
+
+visibility/visible = false
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 0.0
+texture = ExtResource( 2 )
+stretch_mode = 0
+
+[node name="dsplit" type="TextureFrame" parent="monopad_background"]
+
+visibility/visible = false
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 0.0
+texture = ExtResource( 3 )
+stretch_mode = 0
+
+[node name="stick" type="TextureFrame" parent="monopad_background"]
+
+visibility/visible = false
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 0.0
+texture = ExtResource( 4 )
+stretch_mode = 0
+
+[node name="dualpad_background" type="TextureFrame" parent="."]
+
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 0.0
+texture = ExtResource( 6 )
+stretch_mode = 0
+
+[node name="rect" type="TextureFrame" parent="dualpad_background"]
+
+visibility/visible = false
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 0.0
+texture = ExtResource( 2 )
+stretch_mode = 0
+
+[node name="dsplit" type="TextureFrame" parent="dualpad_background"]
+
+visibility/visible = false
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 0.0
+texture = ExtResource( 3 )
+stretch_mode = 0
+
+[node name="stick" type="TextureFrame" parent="dualpad_background"]
+
+visibility/visible = false
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 0.0
+margin/bottom = 0.0
+texture = ExtResource( 4 )
+stretch_mode = 0
+
+[node name="pad0" parent="." instance=ExtResource( 7 )]
+
+visibility/visible = false
+visibility/blend_mode = 3
+transform/pos = Vector2( 0, -0.35849 )
+polygon = Vector2Array( 5, 5.35849, 195, 5.35849, 195, 195, 5, 195 )
+color = Color( 0.458824, 0.784314, 1, 1 )
+
+[node name="pad1" parent="." instance=ExtResource( 7 )]
+
+visibility/visible = false
+visibility/blend_mode = 3
+transform/pos = Vector2( 0, -0.35849 )
+polygon = Vector2Array( 5, 5, 195, 195, 5, 195 )
+color = Color( 0.458824, 0.784314, 1, 1 )
+
+[node name="pad2" parent="." instance=ExtResource( 7 )]
+
+visibility/visible = false
+visibility/blend_mode = 3
+transform/pos = Vector2( 0, -0.35849 )
+polygon = Vector2Array( 5, 5, 195, 5, 195, 195 )
+color = Color( 0.460938, 0.785217, 1, 1 )
+
+

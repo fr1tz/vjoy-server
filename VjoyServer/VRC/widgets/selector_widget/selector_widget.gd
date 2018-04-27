@@ -19,7 +19,7 @@ func _ready():
 
 func init(vrc):
 	mVrc = vrc
-	var txt = mVrc.get_server_name() + " vJoy Selector"
+	var txt = mVrc.get_server_name()
 	get_node("main_canvas/server_name_label").set_text(txt)
 	update_active_joystick_label(mVrc.get_active_joystick())
 

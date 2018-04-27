@@ -1,35 +1,12 @@
-[gd_scene load_steps=13 format=1]
+[gd_scene load_steps=8 format=1]
 
-[ext_resource path="res://widgets/control_widget/touchpad_config_gui.gd" type="Script" id=1]
-[ext_resource path="res://widgets/graphics/button_focus.tres" type="StyleBox" id=2]
-[ext_resource path="res://widgets/graphics/button_pressed.tres" type="StyleBox" id=3]
-[ext_resource path="res://widgets/graphics/button_normal.tres" type="StyleBox" id=4]
-[ext_resource path="res://widgets/control_widget/stick_config_gui.gd" type="Script" id=5]
-[ext_resource path="res://widgets/graphics/slider_grabber.png" type="Texture" id=6]
-[ext_resource path="res://widgets/graphics/slider.tres" type="StyleBox" id=7]
-[ext_resource path="res://widgets/graphics/button_hover.tres" type="StyleBox" id=8]
-[ext_resource path="res://widgets/control_widget/dpad_config_gui.gd" type="Script" id=9]
-[ext_resource path="res://widgets/control_widget/button_config_gui.gd" type="Script" id=10]
-
-[sub_resource type="StyleBoxEmpty" id=3]
-
-content_margin/left = -1.0
-content_margin/right = -1.0
-content_margin/top = -1.0
-content_margin/bottom = -1.0
-
-[sub_resource type="StyleBoxFlat" id=2]
-
-content_margin/left = -1.0
-content_margin/right = -1.0
-content_margin/top = -1.0
-content_margin/bottom = -1.0
-bg_color = Color( 0.480469, 0.480469, 0.480469, 1 )
-light_color = Color( 0.882813, 0.882813, 0.882813, 1 )
-dark_color = Color( 0.234375, 0.234375, 0.234375, 1 )
-border_size = 1
-border_blend = true
-draw_bg = true
+[ext_resource path="res://theme/theme.tres" type="Theme" id=1]
+[ext_resource path="res://widgets/control_widget/config_gui/touchpad_config_gui.gd" type="Script" id=2]
+[ext_resource path="res://widgets/control_widget/config_gui/stick_config_gui.gd" type="Script" id=3]
+[ext_resource path="res://widgets/control_widget/config_gui/dpad_config_gui.gd" type="Script" id=4]
+[ext_resource path="res://widgets/graphics/slider_grabber.png" type="Texture" id=5]
+[ext_resource path="res://widgets/graphics/slider.tres" type="StyleBox" id=6]
+[ext_resource path="res://widgets/control_widget/config_gui/button_config_gui.gd" type="Script" id=7]
 
 [node name="touchpad_config_gui" type="Control"]
 
@@ -37,11 +14,12 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
+theme/theme = ExtResource( 1 )
 margin/left = 0.0
 margin/top = 0.0
 margin/right = 200.0
 margin/bottom = 400.0
-script/script = ExtResource( 1 )
+script/script = ExtResource( 2 )
 
 [node name="mode_buttons" type="HButtonArray" parent="."]
 
@@ -53,10 +31,6 @@ margin/left = 0.0
 margin/top = 0.0
 margin/right = 200.0
 margin/bottom = 40.0
-custom_styles/hover = SubResource( 3 )
-custom_styles/focus = ExtResource( 2 )
-custom_styles/selected = ExtResource( 3 )
-custom_styles/normal = ExtResource( 4 )
 custom_constants/button_separator = 0
 flat = false
 button/count = 3
@@ -85,13 +59,11 @@ margin/left = 0.0
 margin/top = 40.0
 margin/right = 0.0
 margin/bottom = 0.0
-custom_styles/panel = SubResource( 2 )
 tab_align = 1
 tabs_visible = false
 
 [node name="stick_config_gui" type="Control" parent="tabs"]
 
-editor/display_folded = true
 anchor/right = 1
 anchor/bottom = 1
 focus/ignore_mouse = false
@@ -102,7 +74,7 @@ margin/left = 1.0
 margin/top = 1.0
 margin/right = 1.0
 margin/bottom = 1.0
-script/script = ExtResource( 5 )
+script/script = ExtResource( 3 )
 
 [node name="radius" type="Control" parent="tabs/stick_config_gui"]
 
@@ -140,9 +112,6 @@ margin/left = 9.0
 margin/top = 30.0
 margin/right = 159.0
 margin/bottom = 70.0
-custom_icons/grabber_hilite = ExtResource( 6 )
-custom_icons/grabber = ExtResource( 6 )
-custom_styles/slider = ExtResource( 7 )
 range/min = 10.0
 range/max = 100.0
 range/step = 1.0
@@ -189,7 +158,7 @@ size_flags/horizontal = 2
 size_flags/vertical = 0
 margin/left = 9.0
 margin/top = 9.0
-margin/right = 51.0
+margin/right = 57.0
 margin/bottom = 23.0
 text = "Threshold"
 percent_visible = 1.0
@@ -206,9 +175,6 @@ margin/left = 9.0
 margin/top = 30.0
 margin/right = 159.0
 margin/bottom = 70.0
-custom_icons/grabber_hilite = ExtResource( 6 )
-custom_icons/grabber = ExtResource( 6 )
-custom_styles/slider = ExtResource( 7 )
 range/min = 0.0
 range/max = 90.0
 range/step = 1.0
@@ -272,10 +238,6 @@ margin/left = 9.0
 margin/top = 29.0
 margin/right = 69.0
 margin/bottom = 209.0
-custom_styles/hover = ExtResource( 8 )
-custom_styles/focus = ExtResource( 2 )
-custom_styles/selected = ExtResource( 3 )
-custom_styles/normal = ExtResource( 4 )
 custom_constants/button_separator = 0
 flat = false
 button/count = 6
@@ -337,10 +299,6 @@ margin/left = 9.0
 margin/top = 29.0
 margin/right = 69.0
 margin/bottom = 209.0
-custom_styles/hover = ExtResource( 8 )
-custom_styles/focus = ExtResource( 2 )
-custom_styles/selected = ExtResource( 3 )
-custom_styles/normal = ExtResource( 4 )
 custom_constants/button_separator = 0
 flat = false
 button/count = 6
@@ -376,11 +334,11 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 1.0
-margin/top = 1.0
-margin/right = 1.0
-margin/bottom = 1.0
-script/script = ExtResource( 9 )
+margin/left = 4.0
+margin/top = 8.0
+margin/right = 4.0
+margin/bottom = 4.0
+script/script = ExtResource( 4 )
 
 [node name="radius" type="Control" parent="tabs/dpad_config_gui"]
 
@@ -418,9 +376,9 @@ margin/left = 9.0
 margin/top = 30.0
 margin/right = 159.0
 margin/bottom = 70.0
-custom_icons/grabber_hilite = ExtResource( 6 )
-custom_icons/grabber = ExtResource( 6 )
-custom_styles/slider = ExtResource( 7 )
+custom_icons/grabber_hilite = ExtResource( 5 )
+custom_icons/grabber = ExtResource( 5 )
+custom_styles/slider = ExtResource( 6 )
 range/min = 10.0
 range/max = 100.0
 range/step = 1.0
@@ -484,9 +442,9 @@ margin/left = 9.0
 margin/top = 30.0
 margin/right = 159.0
 margin/bottom = 70.0
-custom_icons/grabber_hilite = ExtResource( 6 )
-custom_icons/grabber = ExtResource( 6 )
-custom_styles/slider = ExtResource( 7 )
+custom_icons/grabber_hilite = ExtResource( 5 )
+custom_icons/grabber = ExtResource( 5 )
+custom_styles/slider = ExtResource( 6 )
 range/min = 0.0
 range/max = 90.0
 range/step = 1.0
@@ -516,6 +474,7 @@ max_lines_visible = -1
 
 [node name="button_config_gui" type="Control" parent="tabs"]
 
+editor/display_folded = true
 visibility/visible = false
 anchor/right = 1
 anchor/bottom = 1
@@ -523,11 +482,11 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 1.0
-margin/top = 1.0
-margin/right = 1.0
-margin/bottom = 1.0
-script/script = ExtResource( 10 )
+margin/left = 4.0
+margin/top = 8.0
+margin/right = 4.0
+margin/bottom = 4.0
+script/script = ExtResource( 7 )
 
 [node name="button_num" type="Control" parent="tabs/button_config_gui"]
 
@@ -565,9 +524,9 @@ margin/left = 9.0
 margin/top = 30.0
 margin/right = 159.0
 margin/bottom = 70.0
-custom_icons/grabber_hilite = ExtResource( 6 )
-custom_icons/grabber = ExtResource( 6 )
-custom_styles/slider = ExtResource( 7 )
+custom_icons/grabber_hilite = ExtResource( 5 )
+custom_icons/grabber = ExtResource( 5 )
+custom_styles/slider = ExtResource( 6 )
 range/min = 1.0
 range/max = 128.0
 range/step = 1.0

@@ -141,7 +141,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="VjoyServerVRC.tar">
+    <None Include="vJoyVRC.tar">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="VRC\addons\vrc_exporter\button.gd" />

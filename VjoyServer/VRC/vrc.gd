@@ -55,9 +55,11 @@ func _vrc_init(vrc, vrc_host_api):
 	for i in range(1, 17): 
 		_on_var_changed("JOYSTICK_STATUS/"+str(i))
 	host.connect("var_changed1", self, "_on_var_changed")
-	var product_id_prefix = mServerName.to_lower()+".vjoy_controller."
-	host.add_widget_factory(product_id_prefix+"selector", "vJoy Selector", self, "create_selector_widget")
-	host.add_widget_factory(product_id_prefix+"control", "vJoy Control", self, "create_control_widget")
+	host.add_widget_factory("vjoy.selector", "vJoy Selector", self, "create_selector_widget")
+	host.add_widget_factory("vjoy.control", "vJoy Control", self, "create_control_widget")
+#	var product_id_prefix = mServerName.to_lower()+".vjoy."
+#	host.add_widget_factory(product_id_prefix+"selector", mServerName+" vJoy Selector", self, "create_selector_widget")
+#	host.add_widget_factory(product_id_prefix+"control", mServerName+" vJoy Control", self, "create_control_widget")
 	host.set_icon(get_node("icon").get_texture())
 	host.show_region(get_node("main_panel").get_rect())
 	host.log_notice(self, "ready")
