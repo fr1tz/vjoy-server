@@ -1,0 +1,74 @@
+[gd_scene load_steps=4 format=1]
+
+[ext_resource path="res://vrc/theme/theme.tres" type="Theme" id=1]
+[ext_resource path="res://vrc/widgets/control_widget/config_gui/widget_config_gui.gd" type="Script" id=2]
+[ext_resource path="res://vrc/widgets/control_widget/config_gui/touchpad_config_gui.tscn" type="PackedScene" id=3]
+
+[node name="widget_config_gui" type="Panel"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+theme/theme = ExtResource( 1 )
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 200.0
+margin/bottom = 400.0
+script/script = ExtResource( 2 )
+
+[node name="configure_pad1_button" type="Button" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 60.0
+margin/bottom = 40.0
+toggle_mode = true
+enabled_focus_mode = 2
+shortcut = null
+text = "Pad 1"
+flat = false
+
+[node name="2_pads_button" type="CheckBox" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 72.0
+margin/top = 0.0
+margin/right = 140.0
+margin/bottom = 40.0
+toggle_mode = true
+enabled_focus_mode = 2
+shortcut = null
+text = "2 Pads"
+flat = false
+align = 0
+
+[node name="configure_pad2_button" type="Button" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 140.0
+margin/top = 0.0
+margin/right = 200.0
+margin/bottom = 40.0
+toggle_mode = true
+enabled_focus_mode = 2
+shortcut = null
+text = "Pad 2"
+flat = false
+
+[node name="touchpad_config_gui" parent="." instance=ExtResource( 3 )]
+
+margin/top = 40.0
+margin/bottom = 440.0
+
+

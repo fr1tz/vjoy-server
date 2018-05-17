@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=1]
+
+[ext_resource path="res://vrc/lib/multipad.gd" type="Script" id=1]
+
+[node name="pad1" type="Polygon2D"]
+
+transform/pos = Vector2( -200, 0 )
+polygon = Vector2Array( 200, 0, 430, 0, 430, 240, 200, 240 )
+uv = Vector2Array(  )
+color = Color( 0.224792, 0.248107, 0.496094, 1 )
+vertex_colors = ColorArray(  )
+offset = Vector2( 0, 0 )
+texture/texture = null
+texture/offset = Vector2( 0, 0 )
+texture/scale = Vector2( 1, 1 )
+texture/rotation = 0.0
+invert/enable = false
+invert/border = 100.0
+script/script = ExtResource( 1 )
+mode = "Stick"
+radius = 24
+threshold = 0
+canvas = NodePath("../canvas")
+fg_color = Color( 1, 1, 1, 1 )
+
+
