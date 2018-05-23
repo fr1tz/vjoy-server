@@ -54,7 +54,7 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>VRC\icon\icon.ico</ApplicationIcon>
+    <ApplicationIcon>Graphics\icon\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>4AE3D51953D4C636A1BC1F313D6BC5EEAC4A92E4</ManifestCertificateThumbprint>
@@ -129,7 +129,6 @@
     <EmbeddedResource Include="Controls\VjoyServerControl.resx">
       <DependentUpon>VjoyServerControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VRC\icon\icon.png" />
     <None Include="Graphics\tango-icon-theme\emblem-important.png" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -177,10 +176,12 @@
     <None Include="Graphics\tango-icon-theme\input-gaming.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Graphics\icon\icon.png" />
     <Content Include="VRC\icon\icon.ico" />
     <Content Include="VRC\modules\log_sender.xml" />
     <Content Include="VRC\vrcs\joystick_vrc.xml" />
     <Content Include="VRC\vrcs\main_vrc.xml" />
+    <None Include="VRC\vrc\icon\icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

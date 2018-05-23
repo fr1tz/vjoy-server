@@ -65,7 +65,7 @@ namespace VjoyServer.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap dialog_error {
             get {
-                object obj = ResourceManager.GetObject("dialog-error", resourceCulture);
+                object obj = ResourceManager.GetObject("dialog_error", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -75,7 +75,17 @@ namespace VjoyServer.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap emblem_important {
             get {
-                object obj = ResourceManager.GetObject("emblem-important", resourceCulture);
+                object obj = ResourceManager.GetObject("emblem_important", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icon {
+            get {
+                object obj = ResourceManager.GetObject("icon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -109,7 +109,7 @@ namespace VjoyServer
             {
                 //Program.Log.Add("Got info request");
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                Stream stream = assembly.GetManifestResourceStream("VjoyServer.VRC.icon.icon.png");
+                Stream stream = assembly.GetManifestResourceStream("VjoyServer.Graphics.icon.icon.png");
                 byte[] icon_data = new byte[stream.Length];
                 stream.Read(icon_data, 0, icon_data.Length);
 
