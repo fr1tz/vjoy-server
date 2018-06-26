@@ -25,7 +25,7 @@ namespace VjoyServer
     {
         public static Log Log;
         public static VjoyInterface VjoyInterface;
-        public static RemoteInterface RemoteInterface;
+        public static NetworkInterface NetworkInterface;
 
         /// <summary>
         /// The main entry point for the application.
@@ -35,7 +35,7 @@ namespace VjoyServer
         {
             Log = new Log();
             VjoyInterface = new VjoyInterface();
-            RemoteInterface = new RemoteInterface();
+            NetworkInterface = new NetworkInterface();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());

@@ -34,11 +34,11 @@ namespace VjoyServer
         public MainForm()
         {
             InitializeComponent();
-            AppendLog(Program.Log.Get());
-            Program.Log.NewLogEntry += NewLogEntry;
             VjoyServerControls.Visible = false;
             InitErrorPanel.Visible = false;
             Init();
+            AppendLog(Program.Log.Get());
+            Program.Log.NewLogEntry += NewLogEntry;
         }
 
         private void Init()
@@ -57,7 +57,7 @@ namespace VjoyServer
                     VjoyServerControls.Controls.Add(control);
                     this.serverControls[i] = control;
                 }
-                Program.RemoteInterface.Init();
+                Program.NetworkInterface.Init();
                 Program.VjoyInterface.StartMonitoring();
                 Program.Log.AddEntry("Initialization successful");
             }

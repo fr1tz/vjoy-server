@@ -32,7 +32,7 @@ namespace VjoyServer
         private Object statusLock;
         private bool exported;
         private Object exportedLock;
-        private List<RemoteController> remoteControllers;
+        private List<VjoyController> controllers;
 
         public VjoyDevice(VjoyInterface vjoyInterface, uint vjoyDeviceId)
         {
@@ -44,7 +44,7 @@ namespace VjoyServer
             this.statusLock = new object();
             this.exported = true;
             this.exportedLock = new object();
-            this.remoteControllers = new List<RemoteController>();
+            this.controllers = new List<VjoyController>();
         }
 
         public event EventHandler StatusChanged;
@@ -67,14 +67,26 @@ namespace VjoyServer
         public void UpdateJoystickState()
         {
             JoystickState joystickState = new JoystickState();
-            foreach(RemoteController rc in this.remoteControllers)
-                joystickState.Add(rc.GetJoystickState());
+            foreach(VjoyController controller in this.controllers)
+                joystickState.Add(controller.GetJoystickState());
             joystickState.Clamp();
 
-            uint buttons = 0;
-            for (int i = 0; i < 16; i++)
+            uint buttons1 = 0;
+            for (int i = 0; i < 32; i++)
                 if (joystickState.buttons[i])
-                    buttons |= (uint)1 << i;
+                    buttons1 |= (uint)1 << i;
+            uint buttons2 = 0;
+            for (int i = 0; i < 32; i++)
+                if (joystickState.buttons[32+i])
+                    buttons2 |= (uint)1 << i;
+            uint buttons3 = 0;
+            for (int i = 0; i < 32; i++)
+                if (joystickState.buttons[64+i])
+                    buttons3 |= (uint)1 << i;
+            uint buttons4 = 0;
+            for (int i = 0; i < 32; i++)
+                if (joystickState.buttons[96+i])
+                    buttons4 |= (uint)1 << i;
 
             vJoy.JoystickState iReport = new vJoy.JoystickState
             {
@@ -91,7 +103,10 @@ namespace VjoyServer
                 AxisZRot = (int)((joystickState.axis_z_rot + 1) / 2 * 0x8000),
                 Slider = (int)((joystickState.slider1 + 1) / 2 * 0x8000),
                 Dial = (int)((joystickState.slider2 + 1) / 2 * 0x8000),
-                Buttons = buttons
+                Buttons = buttons1,
+                ButtonsEx1 = buttons2,
+                ButtonsEx2 = buttons3,
+                ButtonsEx3 = buttons4
             };
 
             lock (this.vjoy)
@@ -127,27 +142,27 @@ namespace VjoyServer
             }            
         }
 
-        public bool AddRemoteController(RemoteController rc)
+        public bool AddRemoteController(VjoyController rc)
         {
             if (!IsExported())
                 return false;
 
-            lock (this.remoteControllers)
+            lock (this.controllers)
             {
                 if (GetStatus() != Status.Acquired)
                     if (!Acquire())
                         return false;
-                this.remoteControllers.Add(rc);
+                this.controllers.Add(rc);
             }            
             return true;
         }
 
-        public void RemoveRemoteController(RemoteController rc)
+        public void RemoveRemoteController(VjoyController rc)
         {
-            lock (this.remoteControllers)
+            lock (this.controllers)
             {
-                this.remoteControllers.Remove(rc);
-                if (this.remoteControllers.Count == 0)
+                this.controllers.Remove(rc);
+                if (this.controllers.Count == 0)
                     Release();
             }
         }

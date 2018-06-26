@@ -35,6 +35,11 @@ namespace VjoyServer
 
         public JoystickState()
         {
+            Reset();
+        }
+
+        public void Reset()
+        {
             axis_x = 0;
             axis_y = 0;
             axis_z = 0;
@@ -43,8 +48,8 @@ namespace VjoyServer
             axis_z_rot = 0;
             slider1 = 0;
             slider2 = 0;
-            buttons = new bool[16];
-            for (int i = 0; i < 16; i++)
+            buttons = new bool[128];
+            for (int i = 0; i < 128; i++)
                 buttons[i] = false;
         }
 
@@ -58,7 +63,7 @@ namespace VjoyServer
             axis_z_rot += joystickState.axis_z_rot;
             slider1 += joystickState.slider1;
             slider2 += joystickState.slider2;
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 128; i++)
                 if(joystickState.buttons[i])
                     buttons[i] = true;
         }
