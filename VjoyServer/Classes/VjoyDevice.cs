@@ -28,6 +28,7 @@ namespace VjoyServer
     {
         private vJoy vjoy;
         private uint vjoyDeviceId;
+        private VjoyDeviceConfig config;
         private Status status;
         private Object statusLock;
         private bool exported;
@@ -36,11 +37,12 @@ namespace VjoyServer
 
         public VjoyDevice(VjoyInterface vjoyInterface, uint vjoyDeviceId)
         {
-            if (vjoyDeviceId <= 0 || vjoyDeviceId > 16)
+            if (vjoyDeviceId < 1 || vjoyDeviceId > 16)
                 throw new ArgumentException("Invalid device ID");
             this.vjoy = new vJoy();
             this.vjoyDeviceId = vjoyDeviceId;
-            this.status = Status.Unknown;
+            this.config = new VjoyDeviceConfig(vjoyDeviceId);
+            this.status = Status.Disabled;
             this.statusLock = new object();
             this.exported = true;
             this.exportedLock = new object();
@@ -52,8 +54,7 @@ namespace VjoyServer
 
         public enum Status
         {
-            Unknown,
-            Missing,
+            Disabled,
             Busy,
             Free,
             Acquired
@@ -113,6 +114,11 @@ namespace VjoyServer
             {
                 this.vjoy.UpdateVJD(this.vjoyDeviceId, ref iReport);
             }
+        }
+
+        public VjoyDeviceConfig GetConfig()
+        {
+            return this.config;
         }
 
         public Status GetStatus()
@@ -176,7 +182,7 @@ namespace VjoyServer
                 switch (this.vjoy.GetVJDStatus(this.vjoyDeviceId))
                 {
                     case VjdStat.VJD_STAT_MISS:
-                        newStatus = Status.Missing;
+                        newStatus = Status.Disabled;
                         break;
                     case VjdStat.VJD_STAT_BUSY:
                         newStatus = Status.Busy;
@@ -188,11 +194,13 @@ namespace VjoyServer
                         newStatus = Status.Acquired;
                         break;
                     default:
-                        newStatus = Status.Unknown;
+                        newStatus = Status.Disabled;
                         break;
                 };
                 if (newStatus != oldStatus)
                 {
+                    if (oldStatus == Status.Disabled && newStatus != Status.Disabled)
+                        this.config.Update();
                     this.status = newStatus;
                     OnStatusChanged();
                 }
@@ -207,6 +215,11 @@ namespace VjoyServer
         protected virtual void OnExportedChanged()
         {
             ExportedChanged?.Invoke(this, null);
+        }
+
+        private void Log(string msg)
+        {
+            Program.Log.AddEntry(string.Format("vJoy #{0}: {1}\n", this.vjoyDeviceId, msg));
         }
 
         private bool Acquire()

@@ -57,7 +57,7 @@ namespace VjoyServer
             bool disabled = false;
             switch (status)
             {
-                case VjoyDevice.Status.Missing:
+                case VjoyDevice.Status.Disabled:
                     pic.BackColor = Color.Transparent;
                     label.Text = "Disabled";
                     disabled = true;

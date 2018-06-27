@@ -28,7 +28,8 @@ namespace VjoyServer
     {
         private vJoy vjoy;
         private VjoyDevice[] vjoyDevices;
-        private Thread monitorThread;
+        private Thread monitorStatusThread;
+        private Thread monitorConfigThread;
 
         public VjoyInterface()
         {
@@ -36,7 +37,8 @@ namespace VjoyServer
             this.vjoyDevices = new VjoyDevice[16];
             for (uint i = 0; i < 16; i++)
                 this.vjoyDevices[i] = new VjoyDevice(this, i + 1);
-            this.monitorThread = new Thread(MonitorThread);
+            this.monitorStatusThread = new Thread(MonitorStatusThread);
+            this.monitorConfigThread = new Thread(MonitorConfigThread);
         }
 
         public int Init()
@@ -94,12 +96,14 @@ namespace VjoyServer
 
         public void StartMonitoring()
         {
-            lock (this.monitorThread) this.monitorThread.Start();
+            lock (this.monitorStatusThread) this.monitorStatusThread.Start();
+            //lock (this.monitorConfigThread) this.monitorConfigThread.Start();
         }
 
         public void StopMonitoring()
         {
-            lock (this.monitorThread) this.monitorThread.Abort();
+            lock (this.monitorStatusThread) this.monitorStatusThread.Abort();
+            //lock (this.monitorConfigThread) this.monitorConfigThread.Abort();
         }
 
         public VjoyDevice GetDevice(uint vjoyDeviceId)
@@ -114,13 +118,23 @@ namespace VjoyServer
             return this.vjoyDevices.Clone() as VjoyDevice[];
         }
 
-        private void MonitorThread()
+        private void MonitorStatusThread()
         {
             while (true)
             {
                 for (uint i = 0; i < 16; i++)
                     this.vjoyDevices[i].UpdateStatus();
                 Thread.Sleep(250);
+            }
+        }
+
+        private void MonitorConfigThread()
+        {
+            while (true)
+            {
+                Thread.Sleep(5000);
+                for (uint i = 0; i < 16; i++)
+                    this.vjoyDevices[i].GetConfig().Update();
             }
         }
     }

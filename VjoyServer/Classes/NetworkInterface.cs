@@ -176,7 +176,8 @@ namespace VjoyServer
                     {
                         vjoyClient.ProcessPacket(data);
                         foreach (VjoyDevice device in Program.VjoyInterface.GetDevices())
-                            device.UpdateJoystickState();
+                            if(device.IsExported())
+                                device.UpdateJoystickState();
                         return;
                     }
                 }

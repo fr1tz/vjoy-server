@@ -44,6 +44,7 @@ namespace VjoyServer
             {
                 VjoyController controller = new VjoyController();
                 VjoyDevice device = Program.VjoyInterface.GetDevice(i + 1);
+                device.GetConfig().PropertyChanged += VjoyDeviceConfig_PropertyChanged;
                 device.AddRemoteController(controller);
                 this.controllers[i] = controller;
             }
@@ -61,6 +62,8 @@ namespace VjoyServer
                 uint id = vjoyDevice.GetVjoyDeviceId();
                 string status = GetJoystickStatus(vjoyDevice);
                 lines += string.Format("vjoy_status {0} {1}\n", id, status);
+                foreach(string prop in vjoyDevice.GetConfig().GetProperties())
+                    lines += string.Format("vjoy_config {0} {1}\n", id, prop);
             }
             Send(lines);
         }
@@ -237,12 +240,21 @@ namespace VjoyServer
             return status;
         }
 
+        private void VjoyDeviceConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            VjoyDeviceConfig config = (VjoyDeviceConfig)sender;
+            uint vjoyDeviceId = config.GetVjoyDeviceId();
+            string msg = string.Format("vjoy_config {0} {1} {2}\n", vjoyDeviceId, e.Name, e.Value);
+            Send(msg);
+        }
+        
+
         private void VjoyDevice_StatusChanged(object sender, EventArgs e)
         {
             VjoyDevice vjoyDevice = (VjoyDevice)sender;
-            uint id = vjoyDevice.GetVjoyDeviceId();
+            uint vjoyDeviceId = vjoyDevice.GetVjoyDeviceId();
             string status = GetJoystickStatus(vjoyDevice);
-            string msg = string.Format("vjoy_status {0} {1}\n", id, status);
+            string msg = string.Format("vjoy_status {0} {1}\n", vjoyDeviceId, status);
             Send(msg);
         }
     }

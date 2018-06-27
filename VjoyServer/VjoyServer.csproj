@@ -98,6 +98,7 @@
     <Compile Include="Classes\NetworkInterface.cs" />
     <Compile Include="Classes\VjoyClient.cs" />
     <Compile Include="Classes\VjoyDevice.cs" />
+    <Compile Include="Classes\VjoyDeviceConfig.cs" />
     <Compile Include="Classes\VjoyInterface.cs" />
     <Compile Include="Classes\VRC.cs" />
     <Compile Include="Forms\MainForm.cs">
